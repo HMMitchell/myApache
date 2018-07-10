@@ -4,16 +4,25 @@ let http = require("http");
 let path = require("path");
 // 引入插件mime
 let mime = require("mime");
+// 引入url
+let url = require("url")
 // 引入文件库
 let fs = require("fs");
 // 引入字符串模块
-let  querystring=require("querystring");
+let querystring = require("querystring");
 // 配置网站根目录
 let rootPath = path.join(__dirname, "www");
 // console.log(rootPath);
 
 // 开启服务
 http.createServer((request, response) => {
+    // 实现get功能
+    // 解析url
+    let parseUrl = url.parse(request.url);
+    console.log(parseUrl);
+    // 获取get的数据
+    let result = querystring.parse(parseUrl.query);
+    console.log(result);
     // console.log("你来了");
     // 生成绝对路径 转换中文编码
     let filePath = path.join(rootPath, querystring.unescape(request.url));
