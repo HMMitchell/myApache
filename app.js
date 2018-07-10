@@ -2,8 +2,12 @@
 let http = require("http");
 // 生成路径
 let path = require("path");
+// 引入插件mime
+let mime = require("mime");
 // 引入文件库
-let fs = require("fs")
+let fs = require("fs");
+// 引入字符串模块
+let  querystring=require("querystring");
 // 配置网站根目录
 let rootPath = path.join(__dirname, "www");
 // console.log(rootPath);
@@ -11,8 +15,8 @@ let rootPath = path.join(__dirname, "www");
 // 开启服务
 http.createServer((request, response) => {
     // console.log("你来了");
-    // 生成绝对路径
-    let filePath = path.join(rootPath, request.url);
+    // 生成绝对路径 转换中文编码
+    let filePath = path.join(rootPath, querystring.unescape(request.url));
     // console.log(filePath);
     // 判断访问的这个目录是否存在
     let isExit = fs.existsSync(filePath);
@@ -27,6 +31,11 @@ http.createServer((request, response) => {
                 // 读取文件
                 fs.readFile(filePath, (err, data) => {
                     // 直接返回
+                    // 设置头用插件设置头
+                    // console.log(mime.getType(filePath));
+                    response.writeHead(200, {
+                        'content-type': mime.getType(filePath)
+                    })
                     response.end(data)
                 })
             } //如果是文件夹 
@@ -39,6 +48,7 @@ http.createServer((request, response) => {
                         if (err) {
                             // console.log(err);
                         } else {
+
                             response.end(data);
                         }
                     })
